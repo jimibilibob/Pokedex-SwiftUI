@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct PokemonCellView: View {
+
+    var pokemon: PokemonRaw
+
     var body: some View {
         ZStack {
             ZStack {
@@ -25,14 +28,14 @@ struct PokemonCellView: View {
                 }
                 HStack {
                     VStack(alignment: .leading, spacing: 0) {
-                        Text("#001")
+                        Text("\(pokemon.getPokemonIndexString())")
                             .font(.subheadline)
                             .foregroundColor(Color.white)
-                        Text("Bulbasaur")
+                        Text(pokemon.name.capitalized)
                             .font(.title)
                             .fontWeight(.bold)
                             .foregroundColor(Color.white)
-                        Text("Grass, Poisson")
+                        Text(pokemon.getTypesString())
                             .font(.title2)
                             .foregroundColor(Color.white)
                     }
@@ -40,15 +43,25 @@ struct PokemonCellView: View {
                     Spacer()
                 }
             }
-            .background(.red)
+            .background(Color(hex: PokemonColors.pokemonTypeColorMap[pokemon.pokemonDetails[0].types[0].type.name] ?? "normal"))
             .cornerRadius(15)
             HStack {
                 Spacer()
-                Image("Ivysaur")
-                    .resizable()
-                    .offset(x: 0, y: -20)
-                    .frame(width: 150, height: 150, alignment: .trailing)
-                    .padding(.trailing, 10)
+                AsyncImage(url: URL(string: pokemon.urlImage)) { image in
+                    image
+                        .resizable()
+                        .offset(x: 0, y: -20)
+                        .frame(width: 150, height: 150, alignment: .trailing)
+                        .padding(.trailing, 10)
+                } placeholder: {
+                    Circle()
+                        .trim(from: 0, to: 0.7)
+                        .stroke(.gray, lineWidth: 5)
+                        .rotationEffect(Angle(degrees: 360))
+                        .animation(Animation.default.repeatForever(autoreverses: false))
+                        .frame(width: 50, height: 50, alignment: .trailing)
+                        .padding(.trailing, 10)
+                }
             }
         }
         .listRowSeparator(.hidden)
@@ -59,6 +72,10 @@ struct PokemonCellView: View {
 
 struct PokemonCellView_Previews: PreviewProvider {
     static var previews: some View {
-        PokemonCellView()
+        EmptyView()
+//        PokemonCellView(pokemon: PokemonRaw(id: 1, name: "some",
+//                                            generation: Generation(id: 4, name: "gen1"),
+//                                            pokemonDetails: [PokemonDetail(name: "detail1", height: 5, weight: 5,
+//                                                                           types: [TypeElement(type: Generation(id: 3, name: "gen1"))], stats: [])]))
     }
 }

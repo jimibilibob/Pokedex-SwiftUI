@@ -9,6 +9,8 @@ import SwiftUI
 
 struct PokemonListView: View {
 
+    @StateObject private var viewModel = PokemonListViewModel()
+
     @State private var searchText = ""
     @State private var showCancelButton: Bool = false
 
@@ -58,8 +60,8 @@ struct PokemonListView: View {
                 .padding(.horizontal, 20)
                 .navigationBarHidden(showCancelButton)
                 .offset(x: 0, y: -50)
-                List {
-                    PokemonCellView()
+                List(viewModel.pokemons, id: \.id) { pokemon in
+                    PokemonCellView(pokemon: pokemon)
                         .overlay(
                             NavigationLink(destination: ContentView(), label: {
                             EmptyView()
@@ -73,6 +75,9 @@ struct PokemonListView: View {
                 .offset(x: 0, y: -50)
             }
             .navigationBarHidden(true)
+        }
+        .onAppear {
+            viewModel.getPokemons()
         }
     }
 }
